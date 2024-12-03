@@ -53,7 +53,7 @@ def pca(dados, retencao_variancia=0.95):
     return dados_reduzidos, componentes_principais, vetor_medio
 
 # Função para reconhecimento facial
-def reconhecer_face(imagens_treino, rotulos_treino, imagem_teste, tamanho_imagem=(50, 50)):
+def reconhecimento_facial(imagens_treino, nomes_treino, imagem_teste, tamanho_imagem=(50, 50)):
     imagem_teste_processada = preprocessar_imagem(imagem_teste, tamanho_imagem)
 
     # PCA
@@ -64,13 +64,13 @@ def reconhecer_face(imagens_treino, rotulos_treino, imagem_teste, tamanho_imagem
     # Classificador k-NN simplificado
     distancias = np.linalg.norm(treino_pca - teste_pca, axis=1)
     indice_vizinho_mais_proximo = np.argmin(distancias)
-    rotulo_predito = rotulos_treino[indice_vizinho_mais_proximo]
+    nome_reconhecido = nomes_treino[indice_vizinho_mais_proximo]
     distancia_relativa = distancias[indice_vizinho_mais_proximo]
 
-    return rotulo_predito, distancia_relativa
+    return nome_reconhecido, distancia_relativa
 
 # Mapeamento de rótulos para nomes
-rotulo_para_nome = {
+nome_personagens = {
     0: "Ekko",
     1: "Jayce",
     2: "Jinx",
@@ -79,7 +79,7 @@ rotulo_para_nome = {
 
 # Carregar imagens de treino
 pasta_faces = "faces_database"
-imagens_treino, rotulos_treino = carregar_imagens(pasta_faces)
+imagens_treino, nomes_treino = carregar_imagens(pasta_faces)
 
 # Exemplo de uma imagem de teste
 caminho_imagem_teste = "test_face.jpg"
@@ -88,8 +88,8 @@ if imagem_teste is None:
     raise FileNotFoundError(f"Não foi possível carregar a imagem de teste: {caminho_imagem_teste}")
 
 # Realizar o reconhecimento facial
-rotulo_predito, distancia_relativa = reconhecer_face(imagens_treino, rotulos_treino, imagem_teste)
-nome_predito = rotulo_para_nome.get(rotulo_predito, "Desconhecido")
+nome_reconhecido, distancia_relativa = reconhecimento_facial(imagens_treino, nomes_treino, imagem_teste)
+nome_predito = nome_personagens.get(nome_reconhecido, "Desconhecido")
 
 # Exibir o resultado no terminal
 print(f"Pessoa identificada: {nome_predito}")
